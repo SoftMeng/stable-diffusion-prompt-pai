@@ -25,4 +25,6 @@ The initial use of the model may take longer as it needs to be downloaded to you
 
 https://huggingface.co/alibaba-pai/pai-bloom-1b1-text2prompt-sd
 
+![intro](./img/pai2.png)
+
 
