@@ -1,0 +1,7 @@
+[
+    {
+        "Title":"Alibaba-PAI",
+        "Tokenizer":"alibaba-pai/pai-bloom-1b1-text2prompt-sd",
+        "Model":"alibaba-pai/pai-bloom-1b1-text2prompt-sd"
+    }
+]
