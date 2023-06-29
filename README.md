@@ -1,4 +1,5 @@
 # stable-diffusion-prompt-pai
+
  generate a good stable diffusion prompt by alibaba-pai
 
 ## Installation
@@ -13,7 +14,15 @@
 
 The initial use of the model may take longer as it needs to be downloaded to your machine for offline use. 
 
-![intro](./img/pai.png)
+![intro](./img/pai3.webp)
+
+The rendering effect of the 'Prompt' generated using '1Girl with glass and crystal' is as follows
+
+Chinese: 使用`1girl with glass and crystal`生成的`Prompt`的出图效果如下
+
+![intro](./img/3.webp)
+![intro](./img/1.webp)
+![intro](./img/2.webp)
 
 ## Parameters Explanation
 
@@ -27,4 +36,7 @@ https://huggingface.co/alibaba-pai/pai-bloom-1b1-text2prompt-sd
 
 ![intro](./img/pai2.png)
 
+## 微信
+
+![intro](./img/wx.png)
 
