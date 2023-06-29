@@ -77,7 +77,7 @@ def on_ui_tabs():
         Args:
             prompt (str): As the name suggests, the start of the prompt that the generator should start with.
 
-            repetition_penalty (float): The parameter for repetition penalty. 1.0 means no penalty. Default setting is 1.2
+            repetition_penalty (float): The parameter for repetition penalty. 1.0 means no penalty. Default setting is 1.2.
 
             num_return_sequences (int): The number of results to generate
 
