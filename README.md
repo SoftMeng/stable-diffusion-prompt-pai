@@ -1,5 +1,7 @@
 # stable-diffusion-prompt-pai
 
+- DEMO IMAGE: https://www.jmai.art/home
+
  generate a good stable diffusion prompt by alibaba-pai
 
 ## Installation

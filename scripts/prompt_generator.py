@@ -115,7 +115,6 @@ def on_ui_tabs():
 
     def ui_dynamic_result_visible(num):
         """Makes the results visible"""
-        print(result_prompt)
         k = int(num)
         return [gr.Row.update(visible=True)]*k + [gr.Row.update(visible=False)]*(max_no_results-k)
 
@@ -123,7 +122,6 @@ def on_ui_tabs():
         """Populates the results with the prompts"""
         print(result_prompt)
         lines = result_prompt.splitlines()
-        print(lines)
         num = len(lines)
         result_list = []
         for i in range(int(max_no_results)):
@@ -131,7 +129,6 @@ def on_ui_tabs():
                 result_list.append(lines[i])
             else:
                 result_list.append("")
-        print(result_list)
         return result_list
 
     def ui_dynamic_result_batch():
