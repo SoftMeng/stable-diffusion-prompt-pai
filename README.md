@@ -32,6 +32,17 @@ Chinese: 使用`1girl with glass and crystal`生成的`Prompt`的出图效果如
 - **Repetition Penalty**: The parameter for repetition penalty. 1.0 means no penalty. Default setting is 1.2
 - **How Many To Generate**: The number of results to generate
 
+## SDXL is very Good
+
+These are some images I generated using SDXL. Model: https://liblib.ai/modelinfo/7bae5626042f4bdcbd2bbcf4d93e9645
+
+![xl1.webp](img%2Fxl1.webp)
+![xl2.webp](img%2Fxl2.webp)
+![xl3.webp](img%2Fxl3.webp)
+![xl4.webp](img%2Fxl4.webp)
+![xl5.webp](img%2Fxl5.webp)
+![xl6.webp](img%2Fxl6.webp)
+
 ## Thanks
 
 https://huggingface.co/alibaba-pai/pai-bloom-1b1-text2prompt-sd
