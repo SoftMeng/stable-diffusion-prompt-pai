@@ -9,15 +9,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 """
 
-
-import json
-import re
-
 import gradio as gr
+import json
 import modules
-from pathlib import Path
-from modules import script_callbacks
 import modules.scripts as scripts
+from modules import script_callbacks
+from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 result_prompt = ""
@@ -85,38 +82,46 @@ def on_ui_tabs():
             Returns only an error otherwise saves it in result_prompt
         """
         try:
-            tokenizer = AutoTokenizer.from_pretrained('alibaba-pai/pai-bloom-1b1-text2prompt-sd')
-            model = AutoModelForCausalLM.from_pretrained('alibaba-pai/pai-bloom-1b1-text2prompt-sd')
+            tokenizer = AutoTokenizer.from_pretrained('alibaba-pai/pai-bloom-1b1-text2prompt-sd-v2')
+            model = AutoModelForCausalLM.from_pretrained('alibaba-pai/pai-bloom-1b1-text2prompt-sd-v2')
         except Exception as e:
-            print("[Prompt_PAI]:",f"Exception encountered while attempting to install tokenizer")
+            print("[Prompt_PAI]:", f"Exception encountered while attempting to install tokenizer")
             return gr.update(), f"Error: {e}"
         try:
             raw_prompt = prompt
-            input = f'Instruction: Give a simple description of the image to generate a drawing prompt.\nInput: {raw_prompt}\nOutput:'
+            input = f'Converts a simple image description into a prompt. \
+                Prompts are formatted as multiple related tags separated by commas, plus you can use () to increase the weight, [] to decrease the weight, \
+                or use a number to specify the weight. You should add appropriate words to make the images described in the prompt more aesthetically pleasing, \
+                but make sure there is a correlation between the input and output.\n\
+                ### Input: {raw_prompt}\n### Output:'
+            input2 = f'Converts the artwork description inspired by input into a prompt, excluding Portraits. \
+                You should add appropriate words to make the images described in the prompt more aesthetically pleasing and conform to a certain painting style. \
+                Using natural language.\n\
+                Input: {raw_prompt}\nOutput:'
             input_ids = tokenizer.encode(input, return_tensors='pt')
             outputs = model.generate(
                 input_ids,
                 max_length=256,
                 do_sample=True,
-                temperature=1.2,
+                temperature=0.9,
                 top_k=50,
-                top_p=0.89,
+                top_p=0.91,
                 repetition_penalty=float(repetition_penalty),
                 num_return_sequences=num_return_sequences)
-            print("[Prompt_PAI]:","Generation complete!")
+            print("[Prompt_PAI]:", "Generation complete!")
             prompts = tokenizer.batch_decode(outputs[:, input_ids.size(1):], skip_special_tokens=True)
             prompts = [p.strip() for p in prompts]
             global result_prompt
             result_prompt = '\n'.join([str(elem) for elem in prompts])
         except Exception as e:
             print("[Prompt_PAI]:",
-                f"Exception encountered while attempting to generate prompt: {e}")
+                  f"Exception encountered while attempting to generate prompt: {e}")
             return gr.update(), f"Error: {e}"
 
     def ui_dynamic_result_visible(num):
         """Makes the results visible"""
         k = int(num)
-        return [gr.Row.update(visible=True)]*k + [gr.Row.update(visible=False)]*(max_no_results-k)
+        return [gr.Row.update(visible=True)] * k + [gr.Row.update(visible=False)] * (max_no_results - k)
 
     def ui_dynamic_result_prompts():
         """Populates the results with the prompts"""
@@ -136,11 +141,11 @@ def on_ui_tabs():
 
     def save_prompt_to_file(path, append: bool):
         if len(result_prompt) == 0:
-            print("[Prompt_PAI]:","Prompt is empty")
+            print("[Prompt_PAI]:", "Prompt is empty")
             return
         with open(path, encoding="utf-8", mode="a" if append else "w") as f:
             f.write(result_prompt)
-        print("[Prompt_PAI]:","Prompt written to: ", path)
+        print("[Prompt_PAI]:", "Prompt written to: ", path)
 
     # ----------------------------------------------------------------------------
     # UI structure
@@ -154,15 +159,18 @@ def on_ui_tabs():
                 prompt_textbox = gr.Textbox(
                     lines=2, elem_id="promptTxt", label="Start of the prompt")
         with gr.Column():
-                    with gr.Row():
-                        repetitionPenalty_slider = gr.Slider(
-                            elem_id="repetition_penalty_slider", label="Repetition Penalty", value=1.2, minimum=0.1, maximum=10, interactive=True)
-                        numReturnSequences_slider = gr.Slider(
-                            elem_id="num_return_sequences_slider", label="How Many To Generate", value=5, minimum=1, maximum=max_no_results, interactive=True, step=1)
+            with gr.Row():
+                repetitionPenalty_slider = gr.Slider(
+                    elem_id="repetition_penalty_slider", label="Repetition Penalty", value=1.1, minimum=0.1, maximum=10,
+                    interactive=True)
+                numReturnSequences_slider = gr.Slider(
+                    elem_id="num_return_sequences_slider", label="How Many To Generate", value=5, minimum=1,
+                    maximum=max_no_results, interactive=True, step=1)
         with gr.Column():
             with gr.Row():
                 generate_button = gr.Button(
-                    value="Generate", elem_id="generate_button")  # TODO Add element to show that it is working in the background so users don't think nothing is happening
+                    value="Generate",
+                    elem_id="generate_button")  # TODO Add element to show that it is working in the background so users don't think nothing is happening
 
         # Handles UI for results
         results_vis = []
@@ -203,8 +211,9 @@ def on_ui_tabs():
         save_button.click(fn=save_prompt_to_file, inputs=[
             savePathText, append_checkBox])
         # Please note that we use `.then()` to run other ui elements after the generation is done
-        generate_button.click(fn=generate_longer_generic, inputs=[prompt_textbox, repetitionPenalty_slider, numReturnSequences_slider]).then(
-            fn=ui_dynamic_result_visible, inputs=numReturnSequences_slider,outputs=results_vis).then(
+        generate_button.click(fn=generate_longer_generic,
+                              inputs=[prompt_textbox, repetitionPenalty_slider, numReturnSequences_slider]).then(
+            fn=ui_dynamic_result_visible, inputs=numReturnSequences_slider, outputs=results_vis).then(
             fn=ui_dynamic_result_prompts, outputs=results_txt_list).then(
             fn=ui_dynamic_result_batch, outputs=batch_texbox)
     return (prompt_generator, "Prompt PAI", "Prompt PAI"),
